@@ -1,0 +1,40 @@
+.navbar-container {
+  height: 14vh;
+  padding: 20px;
+
+  .navbar-logo {
+    height: 40px;
+    margin-left: 1rem;
+  }
+
+  .navbar-links {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    flex: 1;
+    justify-content: center;
+  }
+
+
+  .navbar-link {
+    color: #000;
+    text-decoration: none;
+    font-weight: normal;
+    transition: 0.3s;
+
+    &:hover {
+      color: #e36225;
+    }
+
+    &.active {
+      color: #e36225;
+      text-decoration: underline;
+    }
+  }
+
+  .navbar-user {
+    font-weight: 700;
+    color: var(--color-black);
+  }
+
+}

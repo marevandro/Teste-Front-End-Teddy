@@ -4,6 +4,7 @@ import { theme } from './styles/theme';
 import { Provider } from 'react-redux';
 import store from './store/store';
 import Home from './pages/Home/Home';
+import Clients from './pages/Clients/Clients';
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Home />} />
-            {/* Adicione outras rotas aqui posteriormente */}
+            <Route path="/clientes" element={<Clients />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
