@@ -1,0 +1,26 @@
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 16px;
+  padding: 24px;
+
+  .title {
+    margin-bottom: 16px;
+  }
+
+  .home-input-buttom {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 400px;
+
+    .submit-button {
+      margin-top: 8px;
+    }
+  }
+
+
+}
