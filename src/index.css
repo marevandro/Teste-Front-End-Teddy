@@ -1,3 +1,12 @@
+:root {
+  --color-primary: #EC6724;
+  --color-primary-contrast: #FFFFFF;
+  --color-secondary: #363636;
+  --color-black: #000000;
+  --color-black-dark: #121212;
+  --color-black-light: #1E1E1E;
+}
+
 body,
 html {
   margin: 0;
