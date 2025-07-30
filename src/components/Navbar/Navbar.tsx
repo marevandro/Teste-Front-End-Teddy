@@ -21,7 +21,6 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
     <AppBar position="static" color="default" elevation={1}>
       <Toolbar className='navbar-container'>
         <IconButton
-          color="inherit"
           aria-label="menu"
           onClick={onMenuClick}
         >
