@@ -1,16 +1,15 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
 
-// Defina o tipo do estado
 interface UserState {
   name: string;
 }
 
-// Estado inicial com tipagem
 const initialState: UserState = {
   name: '',
 };
 
-const userSlice = createSlice({
+export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
