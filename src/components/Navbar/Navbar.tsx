@@ -46,7 +46,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
           </Box>
         </Box>
         <Typography variant="body1" color="textSecondary">
-          Olá, <span className="navbar-user">Usuário!</span>
+          Olá, <span className="title-user">Usuário!</span>
         </Typography>
       </Toolbar>
     </AppBar>

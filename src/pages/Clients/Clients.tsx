@@ -4,11 +4,20 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import AddIcon from '@mui/icons-material/Add';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import CloseIcon from '@mui/icons-material/Close';
+import ModalDefault, { type ClientData } from '../../components/Modal/ModalDefault';
+
 import './Clients.scss';
 
 export default function Clients() {
   const [clientsPerPage, setClientsPerPage] = useState(16);
   const [currentPage, setCurrentPage] = useState(1);
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalType, setModalType] = useState<'create' | 'edit' | 'delete'>('create');
+  const [selectedClient, setSelectedClient] = useState<ClientData | null>(null);
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+
 
   const totalClients = clientsMock.length;
   const totalPages = Math.ceil(totalClients / clientsPerPage);
@@ -19,6 +28,31 @@ export default function Clients() {
   const handleChangePerPage = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setClientsPerPage(parseInt(e.target.value));
     setCurrentPage(1);
+  };
+
+  const handleOpenModal = (type: 'create' | 'edit' | 'delete', client?: ClientData) => {
+    setModalType(type);
+    setSelectedClient(client || null);
+    setModalOpen(true);
+  };
+
+  const handleConfirm = (data: ClientData) => {
+    if (modalType === 'create') {
+      console.log('Criar cliente:', data);
+    } else if (modalType === 'edit') {
+      console.log('Editar cliente:', data);
+    } else {
+      console.log('Excluir cliente:', data);
+    }
+  };
+
+
+  const toggleItemSelection = (clientId: number) => {
+    setSelectedItems(prev =>
+      prev.includes(clientId)
+        ? prev.filter(id => id !== clientId)
+        : [...prev, clientId]
+    );
   };
 
   return (
@@ -38,18 +72,24 @@ export default function Clients() {
 
         <div className="clients-grid">
           {currentClients.map((client) => (
-            <div className="client-card" key={client.id}>
+            <div
+              className={`client-card ${selectedItems.includes(client.id) ? 'selected' : ''}`}
+              key={client.id}
+            >
               <h3>{client.name}</h3>
               <p>Salário: R${client.salary.toFixed(2)}</p>
               <p>Empresa: {client.company}</p>
               <div className="card-actions">
-                <button title="Adicionar">
-                  <AddIcon />
+                <button
+                  title={selectedItems.includes(client.id) ? "Remover" : "Adicionar"}
+                  onClick={() => toggleItemSelection(client.id)}
+                >
+                  {selectedItems.includes(client.id) ? <CloseIcon /> : <AddIcon />}
                 </button>
-                <button title="Editar">
+                <button onClick={() => handleOpenModal('edit')}>
                   <ModeEditIcon />
                 </button>
-                <button title="Excluir" className="delete">
+                <button className="delete" onClick={() => handleOpenModal('delete')}>
                   <DeleteOutlineIcon />
                 </button>
               </div>
@@ -57,7 +97,7 @@ export default function Clients() {
           ))}
         </div>
 
-        <button className="create-button">Criar cliente</button>
+        <button className="create-button" onClick={() => handleOpenModal('create')}>Criar cliente</button>
 
         <div className="pagination">
           {Array.from({ length: totalPages }, (_, i) => (
@@ -71,6 +111,15 @@ export default function Clients() {
           ))}
         </div>
       </div>
+
+      <ModalDefault
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        type={modalType}
+        client={selectedClient || undefined}
+        onConfirm={handleConfirm}
+      />
+
     </DefaultLayout>
   );
 }

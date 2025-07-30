@@ -47,6 +47,10 @@
     margin: 4px 0;
   }
 
+  &.selected {
+    border: solid 3px var(--color-primary);
+  }
+
   .card-actions {
     width: 100%;
     display: flex;
@@ -76,7 +80,7 @@
   color: var(--color-primary);
   border-radius: 6px;
   cursor: pointer;
-  font-weight: 500;
+  font-weight: 700;
 }
 
 .pagination {
@@ -94,8 +98,8 @@
     cursor: pointer;
 
     &.active {
-      background: #f06c2b;
-      color: white;
+      background: var(--color-primary);
+      color: var(--color-white);
     }
   }
 }
