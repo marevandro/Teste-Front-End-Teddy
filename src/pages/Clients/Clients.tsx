@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { clientsMock } from './mockClients';
 import DefaultLayout from '../../layout/DefaultLayout';
 import AddIcon from '@mui/icons-material/Add';
@@ -8,6 +8,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import ModalDefault, { type ClientData } from '../../components/Modal/ModalDefault';
 
 import './Clients.scss';
+import { getAllClientsApi } from '../../api/clients';
 
 export default function Clients() {
   const [clientsPerPage, setClientsPerPage] = useState(16);
@@ -46,7 +47,6 @@ export default function Clients() {
     }
   };
 
-
   const toggleItemSelection = (clientId: number) => {
     setSelectedItems(prev =>
       prev.includes(clientId)
@@ -54,6 +54,19 @@ export default function Clients() {
         : [...prev, clientId]
     );
   };
+
+  const getAllClients = async () => {
+    try {
+      const response = await getAllClientsApi();
+      console.log("🚀 ~ getAllClients ~ response:", response)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    getAllClients()
+  }, []);
 
   return (
     <DefaultLayout>
