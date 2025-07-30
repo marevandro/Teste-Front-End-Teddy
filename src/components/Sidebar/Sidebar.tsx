@@ -1,10 +1,9 @@
-import React from 'react';
-import './Sidebar.scss';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import HomeIcon from '@mui/icons-material/Home';
 import PersonIcon from '@mui/icons-material/Person';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import logoTeddy from '../../assets/img/teddy-loggo.png'
+import './Sidebar.scss';
 
 interface SidebarProps {
   isOpen: boolean;
