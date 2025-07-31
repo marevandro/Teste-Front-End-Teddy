@@ -11,24 +11,23 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import './Clients.scss';
 import { getAllClientsApi } from '../../api/clients';
 import { formatToBRL } from '../../utils/formatters';
+import Loading from '../../components/Loading/Loading';
 
 export default function Clients() {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [clients, setClients] = useState<ClientData[]>([]);
-  const [clientsPerPage, setClientsPerPage] = useState(16);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [clientsPerPage, setClientsPerPage] = useState<number>(16);
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
-
-  const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [modalType, setModalType] = useState<'create' | 'edit' | 'delete'>('create');
   const [selectedClient, setSelectedClient] = useState<ClientData | null>(null);
-  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const [selectedItems, setSelectedItems] = useState<ClientData['id'][]>([]);
 
-
-  const totalClients = clients.length;
-  const totalPages = Math.ceil(totalClients / clientsPerPage);
-
-  const startIndex = (currentPage - 1) * clientsPerPage;
-  const currentClients = clients.slice(startIndex, startIndex + clientsPerPage);
+  const totalClients: number = clients.length;
+  const totalPages: number = Math.ceil(totalClients / clientsPerPage);
+  const startIndex: number = (currentPage - 1) * clientsPerPage;
+  const currentClients: ClientData[] = clients.slice(startIndex, startIndex + clientsPerPage);
 
   const handleChangePerPage = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setClientsPerPage(parseInt(e.target.value));
@@ -61,10 +60,13 @@ export default function Clients() {
 
   const getAllClients = async () => {
     try {
+      setIsLoading(true);
       const response = await getAllClientsApi();
       setClients(response);
     } catch (error) {
-      console.log(error)
+       console.error('Erro ao buscar clientes:', error);
+    } finally{
+      setIsLoading(false);
     }
   }
 
@@ -75,6 +77,7 @@ export default function Clients() {
   return (
     <DefaultLayout>
       <div className="clients-container">
+        {isLoading && <Loading />}
         <div className="clients-header">
           <p><strong>{totalClients}</strong> clientes encontrados:</p>
           <div className="per-page">
@@ -104,7 +107,7 @@ export default function Clients() {
                 <div className="card-actions">
                   <button
                     title={selectedItems.includes(client.id) ? "Remover" : "Adicionar"}
-                    onClick={() => toggleItemSelection(client.id)}
+                    onClick={() => { toggleItemSelection(client.id); console.log(selectedItems) }}
                   >
                     {selectedItems.includes(client.id) ? <CloseIcon /> : <AddIcon />}
                   </button>
@@ -122,9 +125,9 @@ export default function Clients() {
 
         <button
           className={`create-button ${clients.length === 0 ? 'empty' : ''}`}
-          onClick={() => handleOpenModal('create')}
+          onClick={() => !selectedItems ? handleOpenModal('create') : console.log('Clientes selecionados')}
         >
-          Criar cliente
+          {!selectedItems.length ? 'Criar cliente' : 'Salvar clientes selecionados'}
         </button>
 
         <div className="pagination">
