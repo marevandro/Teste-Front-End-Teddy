@@ -1,11 +1,10 @@
 import { CssBaseline, ThemeProvider } from '@mui/material';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { theme } from './styles/theme';
 import { Provider } from 'react-redux';
 import { store, persistor } from './app/store';
-import Home from './pages/Home/Home';
-import Clients from './pages/Clients/Clients';
 import { PersistGate } from 'redux-persist/integration/react';
+import { AppRoutes } from './routes';
 
 function App() {
   return (
@@ -14,10 +13,7 @@ function App() {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/clientes" element={<Clients />} />
-            </Routes>
+            <AppRoutes />
           </BrowserRouter>
         </ThemeProvider>
       </PersistGate>
