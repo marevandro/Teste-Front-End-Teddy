@@ -28,7 +28,7 @@ export async function createCustomerApi(body: CustomerData): Promise<Client> {
 export async function getAllClientsApi(): Promise<Client[]> {
   try {
     const response = await api.get('/users');
-    return response.data;
+    return response.data?.clients;
   } catch (error) {
     const axiosError = error as AxiosError;
     console.error('Erro ao buscar clientes:', axiosError.message);

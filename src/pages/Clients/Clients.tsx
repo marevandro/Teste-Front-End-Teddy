@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { clientsMock } from './mockClients';
-import DefaultLayout from '../../layout/DefaultLayout';
 import AddIcon from '@mui/icons-material/Add';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import CloseIcon from '@mui/icons-material/Close';
-import ModalDefault, { type ClientData } from '../../components/Modal/ModalDefault';
+import ModalDefault from '../../components/Modal/ModalDefault';
+import type { ClientData } from '../../components/Modal/ModalDefault';
+import DefaultLayout from '../../layout/DefaultLayout';
+
 
 import './Clients.scss';
 import { getAllClientsApi } from '../../api/clients';
+import { formatToBRL } from '../../utils/formatters';
 
 export default function Clients() {
+  const [clients, setClients] = useState<ClientData[]>([]);
   const [clientsPerPage, setClientsPerPage] = useState(16);
   const [currentPage, setCurrentPage] = useState(1);
+
 
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState<'create' | 'edit' | 'delete'>('create');
@@ -20,11 +24,11 @@ export default function Clients() {
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
 
-  const totalClients = clientsMock.length;
+  const totalClients = clients.length;
   const totalPages = Math.ceil(totalClients / clientsPerPage);
 
   const startIndex = (currentPage - 1) * clientsPerPage;
-  const currentClients = clientsMock.slice(startIndex, startIndex + clientsPerPage);
+  const currentClients = clients.slice(startIndex, startIndex + clientsPerPage);
 
   const handleChangePerPage = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setClientsPerPage(parseInt(e.target.value));
@@ -58,7 +62,7 @@ export default function Clients() {
   const getAllClients = async () => {
     try {
       const response = await getAllClientsApi();
-      console.log("🚀 ~ getAllClients ~ response:", response)
+      setClients(response);
     } catch (error) {
       console.log(error)
     }
@@ -83,34 +87,45 @@ export default function Clients() {
           </div>
         </div>
 
-        <div className="clients-grid">
-          {currentClients.map((client) => (
-            <div
-              className={`client-card ${selectedItems.includes(client.id) ? 'selected' : ''}`}
-              key={client.id}
-            >
-              <h3>{client.name}</h3>
-              <p>Salário: R${client.salary.toFixed(2)}</p>
-              <p>Empresa: {client.company}</p>
-              <div className="card-actions">
-                <button
-                  title={selectedItems.includes(client.id) ? "Remover" : "Adicionar"}
-                  onClick={() => toggleItemSelection(client.id)}
-                >
-                  {selectedItems.includes(client.id) ? <CloseIcon /> : <AddIcon />}
-                </button>
-                <button onClick={() => handleOpenModal('edit')}>
-                  <ModeEditIcon />
-                </button>
-                <button className="delete" onClick={() => handleOpenModal('delete')}>
-                  <DeleteOutlineIcon />
-                </button>
+        {totalClients === 0 ? (
+          <div className="no-clients-message">
+            <h2>Não existem clientes</h2>
+          </div>
+        ) : (<>
+          <div className="clients-grid">
+            {currentClients.map((client) => (
+              <div
+                className={`client-card ${selectedItems.includes(client.id) ? 'selected' : ''}`}
+                key={client.id}
+              >
+                <h3>{client.name}</h3>
+                <p>Salário: {formatToBRL(client.salary)}</p>
+                <p>Empresa: {formatToBRL(client.companyValuation)}</p>
+                <div className="card-actions">
+                  <button
+                    title={selectedItems.includes(client.id) ? "Remover" : "Adicionar"}
+                    onClick={() => toggleItemSelection(client.id)}
+                  >
+                    {selectedItems.includes(client.id) ? <CloseIcon /> : <AddIcon />}
+                  </button>
+                  <button onClick={() => handleOpenModal('edit')}>
+                    <ModeEditIcon />
+                  </button>
+                  <button className="delete" onClick={() => handleOpenModal('delete')}>
+                    <DeleteOutlineIcon />
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </>)}
 
-        <button className="create-button" onClick={() => handleOpenModal('create')}>Criar cliente</button>
+        <button
+          className={`create-button ${clients.length === 0 ? 'empty' : ''}`}
+          onClick={() => handleOpenModal('create')}
+        >
+          Criar cliente
+        </button>
 
         <div className="pagination">
           {Array.from({ length: totalPages }, (_, i) => (

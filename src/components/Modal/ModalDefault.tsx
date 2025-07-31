@@ -9,9 +9,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import './ModalDefault.scss';
 
 export interface ClientData {
+  id: number;
   name: string;
-  salary: string;
-  company: string;
+  salary: number;
+  companyValuation: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 interface ModalDefaultProps {
@@ -26,7 +29,7 @@ export default function ModalDefault({
   open,
   onClose,
   type,
-  client = { name: '', salary: '', company: '' },
+  client = { id: 0, name: '', salary: 0, companyValuation: 0 },
   onConfirm
 }: ModalDefaultProps) {
   const [formData, setFormData] = React.useState(client);
@@ -35,11 +38,14 @@ export default function ModalDefault({
     if (open) {
       setFormData(client);
     }
-  }, [open]);
+  }, [open, client]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({
+      ...prev,
+      [name]: name === 'salary' || name === 'companyValuation' ? Number(value) : value
+    }));
   };
 
   const handleSubmit = () => {
@@ -94,7 +100,7 @@ export default function ModalDefault({
             <TextField
               label="Digite o valor da empresa:"
               name="company"
-              value={formData.company}
+              value={formData.companyValuation}
               onChange={handleChange}
               fullWidth
               margin="normal"

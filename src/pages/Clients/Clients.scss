@@ -1,6 +1,8 @@
 .clients-container {
-  padding: 24px;
-  background: #eeecec;
+  padding: 0 30px;
+  background: var(--color-white-dark);
+  height: 100vh;
+  overflow-x: hidden;
 }
 
 .clients-header {
@@ -81,6 +83,10 @@
   border-radius: 6px;
   cursor: pointer;
   font-weight: 700;
+
+  &.empty {
+    margin-top: 50vh;
+  }
 }
 
 .pagination {
@@ -88,7 +94,7 @@
   justify-content: center;
   gap: 6px;
   flex-wrap: wrap;
-  margin-top: 8px;
+  margin-top: 3%;
 
   button {
     padding: 6px 12px;
