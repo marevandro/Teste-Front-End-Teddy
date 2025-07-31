@@ -1,10 +1,13 @@
-export const formatToBRL = (value: number | string): string => {
-  const numberValue = typeof value === 'string' ? parseFloat(value) : value;
+export function formatToBRL(value: string): string {
+  const numeric = value.replace(/\D/g, '');
+  const number = parseFloat((parseInt(numeric || '0', 10) / 100).toFixed(2));
   
-  return new Intl.NumberFormat('pt-BR', {
+  return number.toLocaleString('pt-BR', {
     style: 'currency',
-    currency: 'BRL',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  }).format(numberValue);
-};
+    currency: 'BRL'
+  });
+}
+
+export function parseBRLToNumber(value: string): string {
+  return value.replace(/\D/g, '');
+}
