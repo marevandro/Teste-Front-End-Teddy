@@ -4,49 +4,108 @@ import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import ModalDefault from '../../components/Modal/ModalDefault';
-import type { ClientData } from '../../components/Modal/ModalDefault';
 import DefaultLayout from '../../layout/DefaultLayout';
-
-
-import './Clients.scss';
-import { getAllClientsApi } from '../../api/clients';
-import { formatToBRL } from '../../utils/formatters';
 import Loading from '../../components/Loading/Loading';
+import {
+  getAllClientsApi,
+  createCustomerApi,
+  updateCustomerIdApi,
+  deleteCustomerIdApi,
+} from '../../api/clients';
+import type { ClientDataProps } from '../../components/Modal/ModalDefault';
+import { formatToBRL } from '../../utils/formatters';
+import './Clients.scss';
+import { SnackbarAlert } from '../../components/SnackbarAlert/SnackbarAlert';
 
 export default function Clients() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [clients, setClients] = useState<ClientData[]>([]);
+  const [clients, setClients] = useState<ClientDataProps[]>([]);
   const [clientsPerPage, setClientsPerPage] = useState<number>(16);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [modalType, setModalType] = useState<'create' | 'edit' | 'delete'>('create');
-  const [selectedClient, setSelectedClient] = useState<ClientData | null>(null);
-  const [selectedItems, setSelectedItems] = useState<ClientData['id'][]>([]);
+  const [selectedClient, setSelectedClient] = useState<ClientDataProps | null>(null);
+  const [selectedItems, setSelectedItems] = useState<ClientDataProps['id'][]>([]);
 
   const totalClients: number = clients.length;
   const totalPages: number = Math.ceil(totalClients / clientsPerPage);
   const startIndex: number = (currentPage - 1) * clientsPerPage;
-  const currentClients: ClientData[] = clients.slice(startIndex, startIndex + clientsPerPage);
+  const currentClients: ClientDataProps[] = clients.slice(startIndex, startIndex + clientsPerPage);
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const handleChangePerPage = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setClientsPerPage(parseInt(e.target.value));
     setCurrentPage(1);
   };
 
-  const handleOpenModal = (type: 'create' | 'edit' | 'delete', client?: ClientData) => {
+  const handleOpenModal = (type: 'create' | 'edit' | 'delete', client?: ClientDataProps) => {
     setModalType(type);
     setSelectedClient(client || null);
     setModalOpen(true);
   };
 
-  const handleConfirm = (data: ClientData) => {
-    if (modalType === 'create') {
-      console.log('Criar cliente:', data);
-    } else if (modalType === 'edit') {
-      console.log('Editar cliente:', data);
+  const handleConfirm = async (data: ClientDataProps) => {
+    try {
+      setIsLoading(true);
+
+      const payload = {
+        name: data.name,
+        salary: parseFloat(data.salary),
+        companyValuation: parseFloat(data.companyValuation),
+      };
+
+      if (modalType === 'create') {
+        const newClient = await createCustomerApi(payload);
+        setClients(prev => [...prev, {
+          ...newClient,
+          salary: newClient.salary.toString(),
+          companyValuation: newClient.companyValuation.toString()
+        }]);
+      }
+
+      else if (modalType === 'edit' && selectedClient) {
+        const updatedClient = await updateCustomerIdApi(selectedClient.id.toString(), payload);
+        setClients(prev => prev.map(client =>
+          client.id === updatedClient.id
+            ? {
+              ...updatedClient,
+              salary: updatedClient.salary.toString(),
+              companyValuation: updatedClient.companyValuation.toString()
+            }
+            : client
+        ));
+      }
+
+      else if (modalType === 'delete' && selectedClient) {
+        await deleteCustomerIdApi(selectedClient.id.toString());
+        setClients(prev => prev.filter(client => client.id !== selectedClient.id));
+      }
+
+      setSnackbarMessage(
+        modalType === 'create' ? 'Cliente criado com sucesso!' :
+          modalType === 'edit' ? 'Cliente atualizado com sucesso!' :
+            'Cliente excluído com sucesso!'
+      );
+      setSnackbarOpen(true);
+
+      setModalOpen(false);
+    } catch (error) {
+      console.error('Erro:', error);
+      setSnackbarMessage('Erro ao processar a operação!');
+      setSnackbarOpen(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSelectedOrModalCreate = () => {
+    if (selectedItems.length > 0) {
+      console.log('Clientes selecionados:', selectedItems);
     } else {
-      console.log('Excluir cliente:', data);
+      handleOpenModal('create');
     }
   };
 
@@ -62,10 +121,15 @@ export default function Clients() {
     try {
       setIsLoading(true);
       const response = await getAllClientsApi();
-      setClients(response);
+      const converted = response.map(client => ({
+        ...client,
+        salary: client.salary.toString(),
+        companyValuation: client.companyValuation.toString(),
+      }));
+      setClients(converted)
     } catch (error) {
-       console.error('Erro ao buscar clientes:', error);
-    } finally{
+      console.error('Erro ao buscar clientes:', error);
+    } finally {
       setIsLoading(false);
     }
   }
@@ -76,6 +140,13 @@ export default function Clients() {
 
   return (
     <DefaultLayout>
+      <SnackbarAlert
+        open={snackbarOpen}
+        onClose={() => setSnackbarOpen(false)}
+        message={snackbarMessage}
+        severity={snackbarMessage.includes('Erro') ? 'error' : 'success'}
+      />
+
       <div className="clients-container">
         {isLoading && <Loading />}
         <div className="clients-header">
@@ -111,10 +182,10 @@ export default function Clients() {
                   >
                     {selectedItems.includes(client.id) ? <CloseIcon /> : <AddIcon />}
                   </button>
-                  <button onClick={() => handleOpenModal('edit')}>
+                  <button onClick={() => handleOpenModal('edit', client)}>
                     <ModeEditIcon />
                   </button>
-                  <button className="delete" onClick={() => handleOpenModal('delete')}>
+                  <button className="delete" onClick={() => handleOpenModal('delete', client)}>
                     <DeleteOutlineIcon />
                   </button>
                 </div>
@@ -122,12 +193,11 @@ export default function Clients() {
             ))}
           </div>
         </>)}
-
         <button
           className={`create-button ${clients.length === 0 ? 'empty' : ''}`}
-          onClick={() => !selectedItems ? handleOpenModal('create') : console.log('Clientes selecionados')}
+          onClick={handleSelectedOrModalCreate}
         >
-          {!selectedItems.length ? 'Criar cliente' : 'Salvar clientes selecionados'}
+          {selectedItems.length > 0 ? 'Salvar clientes selecionados' : 'Criar cliente'}
         </button>
 
         <div className="pagination">
@@ -149,8 +219,9 @@ export default function Clients() {
         type={modalType}
         client={selectedClient || undefined}
         onConfirm={handleConfirm}
+        isLoading={isLoading}
       />
 
-    </DefaultLayout>
+    </DefaultLayout >
   );
 }

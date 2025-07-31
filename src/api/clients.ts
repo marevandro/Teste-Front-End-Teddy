@@ -1,22 +1,22 @@
 import api from "../services/axiosConfig";
 import { AxiosError } from "axios";
 
-interface CustomerData {
+interface CustomerDataProps {
   name: string;
   salary: number;
   companyValuation: number;
 }
 
-export interface Client {
+export interface ClientProps {
   id: number;
   name: string;
   salary: number;
   companyValuation: number;
 }
 
-export async function createCustomerApi(body: CustomerData): Promise<Client> {
+export async function createCustomerApi(body: CustomerDataProps): Promise<ClientProps> {
   try {
-    const response = await api.post('/customers', body);
+    const response = await api.post('/users', body);
     return response.data;
   } catch (error) {
     const axiosError = error as AxiosError;
@@ -25,7 +25,7 @@ export async function createCustomerApi(body: CustomerData): Promise<Client> {
   }
 }
 
-export async function getAllClientsApi(): Promise<Client[]> {
+export async function getAllClientsApi(): Promise<ClientProps[]> {
   try {
     const response = await api.get('/users');
     return response.data?.clients;
@@ -36,7 +36,7 @@ export async function getAllClientsApi(): Promise<Client[]> {
   }
 }
 
-export async function getCustomerIdApi(id: string): Promise<Client> {
+export async function getCustomerIdApi(id: string): Promise<ClientProps> {
   try {
     const response = await api.get(`/users/${id}`);
     return response.data;
@@ -47,7 +47,7 @@ export async function getCustomerIdApi(id: string): Promise<Client> {
   }
 }
 
-export async function updateCustomerIdApi(id: string, data: Partial<CustomerData>): Promise<Client> { // Adicionado body
+export async function updateCustomerIdApi(id: string, data: Partial<CustomerDataProps>): Promise<ClientProps> {
   try {
     const response = await api.patch(`/users/${id}`, data);
     return response.data;
