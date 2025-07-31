@@ -16,8 +16,14 @@ export const userSlice = createSlice({
     setName: (state, action: PayloadAction<string>) => {
       state.name = action.payload;
     },
+    setUser(state, action: PayloadAction<Partial<UserState>>) {
+      Object.assign(state, action.payload);
+    },
+    clearUser(state) {
+      state.name = '';
+    },
   },
 });
 
-export const { setName } = userSlice.actions;
+export const { setName, setUser, clearUser } = userSlice.actions;
 export default userSlice.reducer;
