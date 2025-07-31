@@ -1,4 +1,6 @@
 .navbar-container {
+  display: flex;
+  align-items: center;
   height: 14vh;
   padding: 20px;
 
@@ -15,6 +17,11 @@
     justify-content: center;
   }
 
+  .navbar-mobile-menu {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
 
   .navbar-link {
     color: #000;
@@ -31,7 +38,10 @@
       text-decoration: underline;
     }
   }
+}
 
+.navbar-user-small {
+  font-size: 0.8rem;
 }
 
 .title-user {

@@ -150,7 +150,7 @@ export default function Clients() {
       <div className="clients-container">
         {isLoading && <Loading />}
         <div className="clients-header">
-          <p><strong>{totalClients}</strong> clientes encontrados:</p>
+          <p><strong>{totalClients}</strong> clientes encontrados</p>
           <div className="per-page">
             <label>Clientes por página:</label>
             <select value={clientsPerPage} onChange={handleChangePerPage}>
