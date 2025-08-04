@@ -1,9 +1,5 @@
 # Clientes Teddy Open Finance
 
-## Demo
-
-🎥 *[https://drive.google.com/file/d/1I2N9F0eZLNuKqQ4yqD4nXaVPbQ1juKmH/view?usp=sharing]*
-
 ## 🌐 Deploy
 
 Você pode acessar a aplicação online pelo link:  
