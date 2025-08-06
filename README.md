@@ -77,7 +77,6 @@ Alguns padrões adotados:
 - [React Router DOM](https://reactrouter.com/)
 - [Docker](https://www.docker.com/)
 - [Jest](https://jestjs.io/) (parcialmente implementado)
-- [ESLint + Prettier](https://eslint.org/)
 - [Dotenv](https://www.npmjs.com/package/dotenv)
 
 ---
